@@ -1,12 +1,20 @@
-import { Flex, Table } from "@chakra-ui/react";
+import { Flex, Input, Table } from "@chakra-ui/react";
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
+  RowData,
 } from "@tanstack/react-table";
 import { currency } from "../helpers";
 import { InvoiceDeductionState } from "../types";
+import { useDebugValue, useEffect } from "react";
+
+declare module "@tanstack/react-table" {
+  interface TableMeta<TData extends RowData> {
+    updateData: (field: string, value: number) => void;
+  }
+}
 
 const columnHelper = createColumnHelper<InvoiceDeductionState>();
 
@@ -35,17 +43,42 @@ const columns = [
     header: "OUTSTANDING AMOUNT",
     cell: (info) => currency(info.getValue()),
   }),
+  columnHelper.accessor((deduction) => deduction, {
+    header: "ROLLOVER AMOUNT",
+    cell: (info) => {
+      const item = info.getValue();
+      const { updateData } = info.table.options.meta!;
+
+      return (
+        <Input
+          value={item.amount.value}
+          onChange={(e) => {
+            updateData(item.employee.id, Number(e.target.value));
+          }}
+        />
+      );
+    },
+  }),
 ];
 
 type DeductionsTableProps = {
   data: InvoiceDeductionState[];
+  onFieldChange?: (field: string, value: number) => void;
 };
 
-export const DeductionsTable = ({ data }: DeductionsTableProps) => {
+export const DeductionsTable = ({
+  data,
+  onFieldChange,
+}: DeductionsTableProps) => {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    meta: {
+      updateData: (field, value) => {
+        onFieldChange?.(field, value);
+      },
+    },
   });
 
   return (

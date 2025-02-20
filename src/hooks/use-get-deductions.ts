@@ -49,13 +49,20 @@ type UseGetDeductionParams = {
 };
 
 export const useGetDeductions = ({ onSuccess }: UseGetDeductionParams) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   useEffect(() => {
     const fetchDeductions = async () => {
+      setIsLoading(true);
       const response = await getDeductions();
 
+      setIsLoading(false);
       onSuccess?.(adaptResponseToState(response));
     };
 
     fetchDeductions();
   }, []);
+
+  return {
+    isLoading,
+  };
 };

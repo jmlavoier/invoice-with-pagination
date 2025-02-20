@@ -22,9 +22,8 @@ export const SearchDeductions = ({ onChange }: SearchDeductionsProps) => {
     []
   );
 
-  console.log("search: ", value, deferred);
-
   useEffect(() => {
+    console.log(deferred);
     onChange(deferred);
   }, [deferred]);
 

@@ -6,6 +6,8 @@ import { ReactNode, Suspense } from "react";
 type PaginatedInvoiceProps = {
   deductions: InvoiceDeductionState[];
   onFieldChange?: (field: string, value: number) => void;
+  onCheckboxChange?: (field: string, value: boolean) => void;
+  onCheckAllChange?: (value: boolean) => void;
   renderToolbar?: () => ReactNode;
 };
 
@@ -13,6 +15,8 @@ export const InvoiceDetails = ({
   deductions,
   onFieldChange,
   renderToolbar,
+  onCheckboxChange,
+  onCheckAllChange,
 }: PaginatedInvoiceProps) => {
   return (
     <VStack gap={4} width="full" backgroundColor="bg.muted" p={4}>
@@ -25,7 +29,12 @@ export const InvoiceDetails = ({
       {renderToolbar ? <Stack width="full">{renderToolbar()}</Stack> : null}
       <Stack>
         <Suspense fallback={<Spinner />}>
-          <DeductionsTable data={deductions} onFieldChange={onFieldChange} />
+          <DeductionsTable
+            data={deductions}
+            onFieldChange={onFieldChange}
+            onCheckboxChange={onCheckboxChange}
+            onCheckAllChange={onCheckAllChange}
+          />
         </Suspense>
       </Stack>
     </VStack>

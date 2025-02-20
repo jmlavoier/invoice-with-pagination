@@ -1,14 +1,19 @@
-import { useMemo, useState } from "react";
+import {
+  useCallback,
+  useDebugValue,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { InvoiceDeductionState, RootState } from "../types";
 
 const ITEMS_PER_PAGE = 10;
 
 export const useRootState = (): RootState => {
-  const [page, setPage] = useState<number>(0);
+  const [pageIndex, setPageIndex] = useState<number>(0);
   const [deductions, setDeductions] = useState<InvoiceDeductionState[]>();
   const [searchValue, setSearchValue] = useState<string>("");
-
-  console.log("searchValue", searchValue);
 
   const filteredDeductions = useMemo(() => {
     return (
@@ -17,11 +22,11 @@ export const useRootState = (): RootState => {
           return true;
         }
 
-        return deduc.employee.name
+        const res = deduc.employee.name
           .toLocaleLowerCase()
           .includes(searchValue.toLocaleLowerCase());
 
-        return false;
+        return res;
       }) || []
     );
   }, [deductions, searchValue]);
@@ -29,21 +34,27 @@ export const useRootState = (): RootState => {
   const totalItems = filteredDeductions?.length || 0;
   const itemsPerPage = ITEMS_PER_PAGE;
   const pageCount = Math.ceil(totalItems / itemsPerPage);
-  const end = page + itemsPerPage;
+  const start = pageIndex * itemsPerPage;
+  const end = start + itemsPerPage;
 
   const currentPage = useMemo(
     () =>
-      filteredDeductions?.slice(
-        page,
-        end > totalItems - 1 ? totalItems - 1 : end
-      ) || [],
-    [filteredDeductions, page, end, totalItems]
+      filteredDeductions?.slice(start, end > totalItems ? totalItems : end) ||
+      [],
+    [filteredDeductions, pageIndex, end, totalItems]
   );
 
-  console.log(currentPage);
+  const setSearch = useCallback((value: string) => {
+    // setPageIndex(0);
+    setSearchValue(value);
+  }, []);
 
-  return {
-    page,
+  const setPage = useCallback((page: number) => {
+    setPageIndex(page - 1);
+  }, []);
+
+  const root = {
+    pageIndex,
     totalItems,
     itemsPerPage,
     pageCount,
@@ -52,6 +63,12 @@ export const useRootState = (): RootState => {
     deductions: deductions || [],
     setDeductions,
     setPage,
-    setSearchValue,
+    setSearch,
   };
+
+  console.log("root", root);
+
+  useDebugValue("root");
+
+  return root;
 };

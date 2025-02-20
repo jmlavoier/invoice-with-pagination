@@ -1,4 +1,4 @@
-import { Flex, Input, Table } from "@chakra-ui/react";
+import { Input, Table, Text } from "@chakra-ui/react";
 import {
   createColumnHelper,
   flexRender,
@@ -8,47 +8,104 @@ import {
 } from "@tanstack/react-table";
 import { currency } from "../helpers";
 import { InvoiceDeductionState } from "../types";
-import { useDebugValue, useEffect } from "react";
+import { Checkbox } from "./ui/checkbox";
+import { useState } from "react";
 
 declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {
     updateData: (field: string, value: number) => void;
+    onCheckboxChange?: (field: string, value: boolean) => void;
+    onCheckAllChange?: (value: boolean) => void;
   }
 }
 
 const columnHelper = createColumnHelper<InvoiceDeductionState>();
 
 const columns = [
+  columnHelper.accessor((deduction) => deduction, {
+    id: "suggest-writeoff",
+    header: (info) => {
+      const [value, setValue] = useState<boolean>(false);
+
+      return (
+        <Checkbox
+          checked={value}
+          onCheckedChange={({ checked }) => {
+            setValue(Boolean(checked));
+            info.table.options.meta?.onCheckAllChange?.(Boolean(checked));
+          }}
+        />
+      );
+    },
+    cell: (info) => {
+      const { onCheckboxChange } = info.table.options.meta!;
+      const item = info.getValue();
+
+      return (
+        <Checkbox
+          checked={item.suggestWriteoff.value}
+          onCheckedChange={({ checked }) =>
+            onCheckboxChange?.(item.employee.id, Boolean(checked))
+          }
+        />
+      );
+    },
+  }),
   columnHelper.accessor("employee.id", {
-    header: "ID",
+    header: () => (
+      <Text fontSize={16} fontWeight="semibold">
+        ID
+      </Text>
+    ),
     cell: (info) => info.getValue(),
   }),
   columnHelper.accessor("employee.name", {
-    header: "NAME",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("employee.hrEmployeeCode", {
-    header: "COMPANY CODE",
+    header: () => (
+      <Text fontSize={16} fontWeight="semibold">
+        NAME
+      </Text>
+    ),
     cell: (info) => info.getValue(),
   }),
   columnHelper.accessor("originalAmount", {
-    header: "ORIGINAL AMOUNT",
+    header: () => (
+      <Text fontSize={16} fontWeight="semibold">
+        ORIGINAL AMOUNT
+      </Text>
+    ),
     cell: (info) => currency(info.getValue()),
   }),
   columnHelper.accessor("paidAmount", {
-    header: "PAID AMOUNT",
+    header: () => (
+      <Text fontSize={16} fontWeight="semibold">
+        PAID AMOUNT
+      </Text>
+    ),
     cell: (info) => currency(info.getValue()),
   }),
   columnHelper.accessor("outstandingAmount", {
-    header: "OUTSTANDING AMOUNT",
+    header: () => (
+      <Text fontSize={16} fontWeight="semibold">
+        OUTSTANDING AMOUNT
+      </Text>
+    ),
     cell: (info) => currency(info.getValue()),
   }),
   columnHelper.accessor("remainingAmount.value", {
-    header: "REMAINING AMOUNT",
+    header: () => (
+      <Text fontSize={16} fontWeight="semibold">
+        REMAINING AMOUNT
+      </Text>
+    ),
     cell: (info) => currency(info.getValue()),
   }),
   columnHelper.accessor((deduction) => deduction, {
-    header: "ROLLOVER AMOUNT",
+    id: "amount",
+    header: () => (
+      <Text fontSize={16} fontWeight="semibold">
+        ROLLOVER AMOUNT
+      </Text>
+    ),
     cell: (info) => {
       const item = info.getValue();
       const { updateData } = info.table.options.meta!;
@@ -68,11 +125,15 @@ const columns = [
 type DeductionsTableProps = {
   data: InvoiceDeductionState[];
   onFieldChange?: (field: string, value: number) => void;
+  onCheckboxChange?: (field: string, value: boolean) => void;
+  onCheckAllChange?: (value: boolean) => void;
 };
 
 export const DeductionsTable = ({
   data,
   onFieldChange,
+  onCheckAllChange,
+  onCheckboxChange,
 }: DeductionsTableProps) => {
   const table = useReactTable({
     data,
@@ -82,6 +143,8 @@ export const DeductionsTable = ({
       updateData: (field, value) => {
         onFieldChange?.(field, value);
       },
+      onCheckboxChange,
+      onCheckAllChange,
     },
   });
 

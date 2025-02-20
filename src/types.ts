@@ -27,7 +27,7 @@ export type InvoiceDeductionState = {
 };
 
 export type RootState = {
-  page: number;
+  pageIndex: number;
   itemsPerPage: number;
   totalItems: number;
   pageCount: number;
@@ -37,6 +37,6 @@ export type RootState = {
   setDeductions: React.Dispatch<
     React.SetStateAction<InvoiceDeductionState[] | undefined>
   >;
-  setPage: React.Dispatch<React.SetStateAction<number>>;
-  setSearchValue: React.Dispatch<React.SetStateAction<string>>;
+  setPage: (page: number) => void;
+  setSearch: (value: string) => void;
 };

@@ -7,7 +7,7 @@ type PaginatedInvoiceProps = {
   onFieldChange?: (field: string, value: number) => void;
 };
 
-export const PaginatedInvoice = ({
+export const InvoiceDetails = ({
   deductions,
   onFieldChange,
 }: PaginatedInvoiceProps) => {

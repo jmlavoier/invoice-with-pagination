@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { PaginatedInvoice } from "../components/paginated-invoice";
+import { InvoiceDetails } from "../components/invoice-details";
 import { useRootState } from "../hooks/use-root-state";
 import { useGetDeductions } from "../hooks/use-get-deductions";
 import { useFormik } from "formik";
@@ -56,7 +56,7 @@ export default function InvoicePage() {
 
   return formik.values ? (
     <VStack gap={6}>
-      <PaginatedInvoice
+      <InvoiceDetails
         deductions={formik.values}
         onFieldChange={handleFieldChange}
       />

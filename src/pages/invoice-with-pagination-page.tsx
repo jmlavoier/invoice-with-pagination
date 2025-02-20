@@ -1,9 +1,4 @@
-import { useTransition } from "react";
-import { InvoiceDetails } from "../components/invoice-details";
-import { useRootState } from "../hooks/use-root-state";
-import { useGetDeductions } from "../hooks/use-get-deductions";
-
-import { HStack, Spinner, Stack, VStack } from "@chakra-ui/react";
+import { HStack, Spinner, Stack, Text, VStack } from "@chakra-ui/react";
 import {
   PaginationItems,
   PaginationNextTrigger,
@@ -12,15 +7,18 @@ import {
 } from "../components/ui/pagination";
 import { SearchDeductions } from "../components/search-deductions";
 import { useForm } from "../hooks/use-form";
+import { RootState } from "../types";
+import { DeductionsTable } from "../components/deductions-table";
 
-export default function InvoicePage() {
-  // Get deductions from the services
-  const { isLoading } = useGetDeductions({
-    onSuccess: (data) => {
-      setDeductions(data);
-    },
-  });
+type InvoiceWithPaginationPageProps = {
+  isLoading: boolean;
+  rootState: RootState;
+};
 
+export function InvoiceWithPaginationPage({
+  isLoading,
+  rootState,
+}: InvoiceWithPaginationPageProps) {
   // Root state management
   const {
     currentPage,
@@ -31,7 +29,7 @@ export default function InvoicePage() {
     setDeductions,
     setPage,
     setSearch,
-  } = useRootState();
+  } = rootState;
 
   // Local form per current page
   const { formik, setFieldValue, setCheckbox, setAllCheckboxes, isPending } =
@@ -57,21 +55,30 @@ export default function InvoicePage() {
           <Spinner />
         ) : (
           <>
-            <InvoiceDetails
-              deductions={formik.values}
-              onFieldChange={setFieldValue}
-              onCheckboxChange={setCheckbox}
-              onCheckAllChange={setAllCheckboxes}
-              checkAllValue={checkAllValue}
-              renderToolbar={() => (
-                <SearchDeductions
-                  onChange={(value) => {
-                    setSearch(value);
-                  }}
-                />
-              )}
-            />
+            <VStack gap={4} width="full" backgroundColor="bg.muted" p={4}>
+              <Stack flex="1" width="full" alignItems="flex-start">
+                <Text fontSize={18}>
+                  Invoice Id: 2955534b-1521-468f-844f-cb2a68a790d6
+                </Text>
+                <Text fontSize={18}>Invoice Number: 1238974</Text>
+                <Text
+                  fontSize={18}
+                >{`Employees: ${formik.values.length}`}</Text>
+              </Stack>
+              <SearchDeductions
+                onChange={(value) => {
+                  setSearch(value);
+                }}
+              />
 
+              <DeductionsTable
+                data={formik.values}
+                onFieldChange={setFieldValue}
+                onCheckboxChange={setCheckbox}
+                onCheckAllChange={setAllCheckboxes}
+                checkAllValue={checkAllValue}
+              />
+            </VStack>
             <PaginationRoot
               count={totalItems}
               pageSize={itemsPerPage}

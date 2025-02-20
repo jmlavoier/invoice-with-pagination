@@ -1,12 +1,5 @@
-import {
-  useCallback,
-  useDebugValue,
-  useMemo,
-  useRef,
-  useState,
-  useTransition,
-} from "react";
-import { InvoiceDeductionState, RootState } from "../types";
+import { useCallback, useDebugValue, useMemo, useState } from "react";
+import { CheckedState, InvoiceDeductionState, RootState } from "../types";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -44,6 +37,18 @@ export const useRootState = (): RootState => {
     [filteredDeductions, pageIndex, end, totalItems]
   );
 
+  const checkAllValue = useMemo((): CheckedState => {
+    const isAllSelected =
+      deductions?.every((deduction) => deduction.suggestWriteoff.value) ||
+      false;
+    const hasSomeSelected =
+      deductions?.some((deduction) => deduction.suggestWriteoff.value) || false;
+
+    const isIndeterminate = hasSomeSelected && !isAllSelected;
+
+    return isIndeterminate ? "indeterminate" : isAllSelected;
+  }, [deductions]);
+
   const setSearch = useCallback((value: string) => {
     // setPageIndex(0);
     setSearchValue(value);
@@ -61,12 +66,11 @@ export const useRootState = (): RootState => {
     currentPage,
     filteredDeductions,
     deductions: deductions || [],
+    checkAllValue,
     setDeductions,
     setPage,
     setSearch,
   };
-
-  console.log("root", root);
 
   useDebugValue("root");
 

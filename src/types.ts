@@ -1,3 +1,7 @@
+import { Checkbox as ChakraCheckbox } from "@chakra-ui/react";
+
+export type CheckedState = ChakraCheckbox.RootProps["checked"];
+
 type Field<T = string> = {
   initialValue?: T;
   value: T;
@@ -39,4 +43,5 @@ export type RootState = {
   >;
   setPage: (page: number) => void;
   setSearch: (value: string) => void;
+  checkAllValue: CheckedState;
 };

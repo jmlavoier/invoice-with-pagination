@@ -1,5 +1,11 @@
-import { Skeleton, Spinner, Stack, Text, VStack } from "@chakra-ui/react";
-import { InvoiceDeductionState } from "../types";
+import {
+  Checkbox as ChakraCheckbox,
+  Spinner,
+  Stack,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
+import { CheckedState, InvoiceDeductionState } from "../types";
 import { DeductionsTable } from "./deductions-table";
 import { ReactNode, Suspense } from "react";
 
@@ -7,7 +13,8 @@ type PaginatedInvoiceProps = {
   deductions: InvoiceDeductionState[];
   onFieldChange?: (field: string, value: number) => void;
   onCheckboxChange?: (field: string, value: boolean) => void;
-  onCheckAllChange?: (value: boolean) => void;
+  onCheckAllChange?: (value: CheckedState) => void;
+  checkAllValue?: CheckedState;
   renderToolbar?: () => ReactNode;
 };
 
@@ -17,6 +24,7 @@ export const InvoiceDetails = ({
   renderToolbar,
   onCheckboxChange,
   onCheckAllChange,
+  checkAllValue,
 }: PaginatedInvoiceProps) => {
   return (
     <VStack gap={4} width="full" backgroundColor="bg.muted" p={4}>
@@ -34,6 +42,7 @@ export const InvoiceDetails = ({
             onFieldChange={onFieldChange}
             onCheckboxChange={onCheckboxChange}
             onCheckAllChange={onCheckAllChange}
+            checkAllValue={checkAllValue}
           />
         </Suspense>
       </Stack>

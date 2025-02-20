@@ -1,4 +1,9 @@
-import { Input, Table, Text } from "@chakra-ui/react";
+import {
+  Input,
+  Table,
+  Text,
+  Checkbox as ChakraCheckbox,
+} from "@chakra-ui/react";
 import {
   createColumnHelper,
   flexRender,
@@ -9,13 +14,15 @@ import {
 import { currency } from "../helpers";
 import { InvoiceDeductionState } from "../types";
 import { Checkbox } from "./ui/checkbox";
-import { useState } from "react";
+
+type CheckedState = ChakraCheckbox.RootProps["checked"];
 
 declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {
     updateData: (field: string, value: number) => void;
     onCheckboxChange?: (field: string, value: boolean) => void;
-    onCheckAllChange?: (value: boolean) => void;
+    onCheckAllChange?: (value: CheckedState) => void;
+    checkAllValue?: CheckedState;
   }
 }
 
@@ -25,14 +32,13 @@ const columns = [
   columnHelper.accessor((deduction) => deduction, {
     id: "suggest-writeoff",
     header: (info) => {
-      const [value, setValue] = useState<boolean>(false);
+      const { onCheckAllChange, checkAllValue } = info.table.options.meta!;
 
       return (
         <Checkbox
-          checked={value}
+          checked={checkAllValue}
           onCheckedChange={({ checked }) => {
-            setValue(Boolean(checked));
-            info.table.options.meta?.onCheckAllChange?.(Boolean(checked));
+            onCheckAllChange?.(checked);
           }}
         />
       );
@@ -114,7 +120,10 @@ const columns = [
         <Input
           value={item.amount.value}
           onChange={(e) => {
-            updateData(item.employee.id, Number(e.target.value));
+            const value = Number(e.target.value);
+            if (!isNaN(value)) {
+              updateData(item.employee.id, Number(e.target.value));
+            }
           }}
         />
       );
@@ -126,7 +135,8 @@ type DeductionsTableProps = {
   data: InvoiceDeductionState[];
   onFieldChange?: (field: string, value: number) => void;
   onCheckboxChange?: (field: string, value: boolean) => void;
-  onCheckAllChange?: (value: boolean) => void;
+  onCheckAllChange?: (value: CheckedState) => void;
+  checkAllValue?: CheckedState;
 };
 
 export const DeductionsTable = ({
@@ -134,6 +144,7 @@ export const DeductionsTable = ({
   onFieldChange,
   onCheckAllChange,
   onCheckboxChange,
+  checkAllValue,
 }: DeductionsTableProps) => {
   const table = useReactTable({
     data,
@@ -145,6 +156,7 @@ export const DeductionsTable = ({
       },
       onCheckboxChange,
       onCheckAllChange,
+      checkAllValue,
     },
   });
 

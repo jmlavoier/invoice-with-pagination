@@ -29,6 +29,7 @@ export default function InvoicePage() {
     totalItems,
     setDeductions,
     setPage,
+    setSearchValue,
   } = useRootState();
 
   const formik = useFormik({
@@ -44,6 +45,10 @@ export default function InvoicePage() {
         if (deduction.employee.id === field) {
           return {
             ...deduction,
+            remainingAmount: {
+              ...deduction.remainingAmount,
+              value: deduction.remainingAmount.initialValue! - value,
+            },
             amount: {
               ...deduction.amount,
               value,
@@ -63,7 +68,10 @@ export default function InvoicePage() {
           onFieldChange={handleFieldChange}
           renderToolbar={() => (
             <SearchDeductions
-              onChange={(value) => console.log("changed", value)}
+              onChange={(value) => {
+                console.log("onChange", value);
+                setSearchValue(value);
+              }}
             />
           )}
         />

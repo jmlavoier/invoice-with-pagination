@@ -1,7 +1,7 @@
-import { Skeleton, Stack, Text, VStack } from "@chakra-ui/react";
+import { Skeleton, Spinner, Stack, Text, VStack } from "@chakra-ui/react";
 import { InvoiceDeductionState } from "../types";
 import { DeductionsTable } from "./deductions-table";
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 
 type PaginatedInvoiceProps = {
   deductions: InvoiceDeductionState[];
@@ -24,7 +24,9 @@ export const InvoiceDetails = ({
       </Stack>
       {renderToolbar ? <Stack width="full">{renderToolbar()}</Stack> : null}
       <Stack>
-        <DeductionsTable data={deductions} onFieldChange={onFieldChange} />
+        <Suspense fallback={<Spinner />}>
+          <DeductionsTable data={deductions} onFieldChange={onFieldChange} />
+        </Suspense>
       </Stack>
     </VStack>
   );

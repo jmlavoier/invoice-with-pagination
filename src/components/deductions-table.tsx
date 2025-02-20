@@ -43,6 +43,10 @@ const columns = [
     header: "OUTSTANDING AMOUNT",
     cell: (info) => currency(info.getValue()),
   }),
+  columnHelper.accessor("remainingAmount.value", {
+    header: "REMAINING AMOUNT",
+    cell: (info) => currency(info.getValue()),
+  }),
   columnHelper.accessor((deduction) => deduction, {
     header: "ROLLOVER AMOUNT",
     cell: (info) => {

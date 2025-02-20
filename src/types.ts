@@ -33,8 +33,10 @@ export type RootState = {
   pageCount: number;
   currentPage: InvoiceDeductionState[];
   deductions: InvoiceDeductionState[];
+  filteredDeductions: InvoiceDeductionState[];
   setDeductions: React.Dispatch<
     React.SetStateAction<InvoiceDeductionState[] | undefined>
   >;
   setPage: React.Dispatch<React.SetStateAction<number>>;
+  setSearchValue: React.Dispatch<React.SetStateAction<string>>;
 };

@@ -12,7 +12,6 @@ type SearchDeductionsProps = {
 };
 
 export const SearchDeductions = ({ onChange }: SearchDeductionsProps) => {
-  const id = useId();
   const [value, setValue] = useState<string>("");
   const deferred = useDeferredValue(value);
 
@@ -23,6 +22,8 @@ export const SearchDeductions = ({ onChange }: SearchDeductionsProps) => {
     []
   );
 
+  console.log("search: ", value, deferred);
+
   useEffect(() => {
     onChange(deferred);
   }, [deferred]);
@@ -32,7 +33,12 @@ export const SearchDeductions = ({ onChange }: SearchDeductionsProps) => {
       <Stack>
         <Field.Root width="300px">
           <Field.Label fontWeight="semibold">SEARCH</Field.Label>
-          <Input placeholder="Search by name" backgroundColor="white" />
+          <Input
+            placeholder="Search by name"
+            backgroundColor="white"
+            value={value}
+            onChange={handleChange}
+          />
           <Field.HelperText />
           <Field.ErrorText />
         </Field.Root>

@@ -44,22 +44,18 @@ const adaptResponseToState = (
   });
 };
 
-export const useDeductedAmountPerEmployee = () => {
-  const [deductions, setDeductions] = useState<
-    InvoiceDeductionState[] | undefined
-  >();
+type UseGetDeductionParams = {
+  onSuccess?: (data: InvoiceDeductionState[]) => void;
+};
 
+export const useGetDeductions = ({ onSuccess }: UseGetDeductionParams) => {
   useEffect(() => {
     const fetchDeductions = async () => {
       const response = await getDeductions();
 
-      console.log(response);
-
-      setDeductions(adaptResponseToState(response));
+      onSuccess?.(adaptResponseToState(response));
     };
 
     fetchDeductions();
   }, []);
-
-  return deductions;
 };

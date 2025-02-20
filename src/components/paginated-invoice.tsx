@@ -4,9 +4,13 @@ import { DeductionsTable } from "./deductions-table";
 
 type PaginatedInvoiceProps = {
   deductions: InvoiceDeductionState[];
+  onFieldChange?: (field: string, value: number) => void;
 };
 
-export const PaginatedInvoice = ({ deductions }: PaginatedInvoiceProps) => {
+export const PaginatedInvoice = ({
+  deductions,
+  onFieldChange,
+}: PaginatedInvoiceProps) => {
   return (
     <VStack gap={4}>
       <Stack flex="1" backgroundColor="CaptionText">
@@ -14,7 +18,7 @@ export const PaginatedInvoice = ({ deductions }: PaginatedInvoiceProps) => {
         <Skeleton height="5" width="80%" />
       </Stack>
       <Stack>
-        <DeductionsTable data={deductions} />
+        <DeductionsTable data={deductions} onFieldChange={onFieldChange} />
       </Stack>
     </VStack>
   );

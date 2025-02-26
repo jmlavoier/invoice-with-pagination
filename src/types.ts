@@ -25,3 +25,15 @@ export type InvoiceDeductionState = {
   suggestWriteoff: Field<boolean>;
   index: number;
 };
+
+export type RootState = {
+  page: number;
+  itemsPerPage: number;
+  totalItems: number;
+  currentPage: InvoiceDeductionState[];
+  deductions: InvoiceDeductionState[];
+  setDeductions: React.Dispatch<
+    React.SetStateAction<InvoiceDeductionState[] | undefined>
+  >;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+};
